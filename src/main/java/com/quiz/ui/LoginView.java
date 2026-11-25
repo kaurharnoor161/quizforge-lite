@@ -53,21 +53,28 @@ public class LoginView {
         registerForm = buildRegisterForm();
 
         Label title = new Label("QuizForge Lite");
-        title.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1e3a8a;");
-        subtitle.setStyle("-fx-text-fill: #6b7280;");
+        title.getStyleClass().add("auth-title");
+        subtitle.getStyleClass().add("auth-subtitle");
+        Label mark = new Label("Q");
+        mark.getStyleClass().add("auth-brand-mark");
+        Label tagline = new Label("LEARN. PRACTICE. PROGRESS.");
+        tagline.setStyle("-fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: #8290a9;");
+        VBox brandCopy = new VBox(3, title, tagline);
+        HBox brand = new HBox(12, mark, brandCopy);
+        brand.setAlignment(Pos.CENTER_LEFT);
+        Label portalNote = new Label("One secure portal for students and administrators.");
+        portalNote.getStyleClass().add("auth-note");
+        portalNote.setWrapText(true);
 
-        // The white card in the middle of the screen.
-        VBox card = new VBox(14, title, subtitle, formArea);
-        card.setAlignment(Pos.TOP_CENTER);
-        card.setPadding(new Insets(28));
-        card.setMaxWidth(380);
+        VBox card = new VBox(16, brand, subtitle, portalNote, formArea);
+        card.setAlignment(Pos.TOP_LEFT);
+        card.setPadding(new Insets(32));
+        card.setMaxWidth(410);
         card.setMaxHeight(Region.USE_PREF_SIZE);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 12;"
-                + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 18, 0.2, 0, 4);");
+        card.getStyleClass().add("auth-card");
 
-        // StackPane centres the card automatically.
-        root.setStyle("-fx-background-color: linear-gradient(to bottom right, #dbeafe, #eff6ff);");
-        root.setPadding(new Insets(20));
+        root.getStyleClass().add("auth-root");
+        root.setPadding(new Insets(28));
         root.getChildren().add(card);
 
         showLoginMode();
@@ -243,15 +250,13 @@ public class LoginView {
     private static Button primaryButton(String text) {
         Button button = new Button(text);
         button.setMaxWidth(Double.MAX_VALUE);
-        button.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white; "
-                + "-fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
+        button.getStyleClass().add("primary-button");
         return button;
     }
 
     private static Button linkButton(String text) {
         Button button = new Button(text);
-        button.setStyle("-fx-background-color: transparent; -fx-text-fill: #2563eb; "
-                + "-fx-underline: true; -fx-cursor: hand;");
+        button.getStyleClass().add("auth-link-button");
         return button;
     }
 

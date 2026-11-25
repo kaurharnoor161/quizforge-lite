@@ -57,9 +57,13 @@ public class StudentView {
     public StudentView(User user) {
         this.user = Objects.requireNonNull(user, "user must not be null");
 
-        root.setTop(buildTopBar());
+        HBox topBar = buildTopBar();
+        root.setTop(topBar);
+        BorderPane.setMargin(topBar, new Insets(0, 0, 14, 0));
         root.setLeft(buildLeftPanel());
         root.setCenter(buildCenterPanel());
+        root.getStyleClass().add("dashboard-root");
+        root.setPadding(new Insets(18));
 
         refresh(); // load everything once when the screen is built
     }
@@ -74,9 +78,10 @@ public class StudentView {
 
     private HBox buildTopBar() {
         Label title = new Label(user.getDashboardTitle());
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        title.getStyleClass().add("topbar-title");
 
         Label welcome = new Label("Welcome, " + user.getFullName());
+        welcome.getStyleClass().add("topbar-welcome");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -86,14 +91,14 @@ public class StudentView {
 
         HBox bar = new HBox(15, title, spacer, welcome, logoutButton);
         bar.setAlignment(Pos.CENTER_LEFT);
-        bar.setPadding(new Insets(10, 15, 10, 15));
-        bar.setStyle("-fx-background-color: #eef2f7; -fx-border-color: #c9d1dc; -fx-border-width: 0 0 1 0;");
+        bar.setPadding(new Insets(14, 18, 14, 18));
+        bar.getStyleClass().add("topbar");
         return bar;
     }
 
     private VBox buildLeftPanel() {
         Label heading = new Label("1. Choose a subject");
-        heading.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+        heading.getStyleClass().add("section-title");
 
         subjectList.setPlaceholder(new Label("No questions available yet. Ask the admin to add some."));
         VBox.setVgrow(subjectList, Priority.ALWAYS);
@@ -105,26 +110,28 @@ public class StudentView {
 
         // Start is disabled while nothing is selected
         startButton.disableProperty().bind(subjectList.getSelectionModel().selectedItemProperty().isNull());
-        startButton.setStyle("-fx-font-weight: bold;");
+        startButton.getStyleClass().add("primary-button");
         startButton.setOnAction(e -> handleStart());
 
         // selecting a subject shows how many questions it has
         subjectList.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> updateInfoLabel());
 
         VBox box = new VBox(10, heading, subjectList, infoLabel, shuffleBox, startButton);
-        box.setPadding(new Insets(15));
-        box.setPrefWidth(300);
-        box.setMinWidth(300);
-        box.setMaxWidth(300);
-        box.setStyle("-fx-background-color: #f7f9fb; -fx-border-color: #c9d1dc; -fx-border-width: 0 1 0 0;");
+        box.setPadding(new Insets(18));
+        box.setPrefWidth(280);
+        box.setMinWidth(280);
+        box.setMaxWidth(280);
+        box.getStyleClass().add("panel");
+        BorderPane.setMargin(box, new Insets(0, 14, 0, 0));
         return box;
     }
 
     private VBox buildCenterPanel() {
         Label recentHeading = new Label("Your last 5 attempts");
-        recentHeading.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+        recentHeading.getStyleClass().add("section-title");
 
         Button refreshButton = new Button("Refresh");
+        refreshButton.getStyleClass().add("secondary-button");
         refreshButton.setOnAction(e -> refresh());
 
         Region spacer = new Region();
@@ -137,13 +144,22 @@ public class StudentView {
         recentList.setMinHeight(150);
         recentList.setMaxHeight(150);
 
-        historyLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+        historyLabel.getStyleClass().add("section-title");
 
         buildHistoryTable();
         VBox.setVgrow(historyTable, Priority.ALWAYS);
 
-        VBox box = new VBox(10, headingRow, recentList, historyLabel, historyTable);
-        box.setPadding(new Insets(15));
+        Label introTitle = new Label("Your next challenge starts here");
+        introTitle.getStyleClass().add("page-title");
+        Label introSubtitle = new Label("Pick a subject, take a quiz, and keep building your streak.");
+        introSubtitle.getStyleClass().add("page-subtitle");
+        VBox intro = new VBox(6, introTitle, introSubtitle);
+        intro.setPadding(new Insets(16));
+        intro.getStyleClass().add("toolbar");
+
+        VBox box = new VBox(14, intro, headingRow, recentList, historyLabel, historyTable);
+        box.setPadding(new Insets(18));
+        box.getStyleClass().add("content-panel");
         return box;
     }
 

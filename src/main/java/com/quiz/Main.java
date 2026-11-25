@@ -96,6 +96,7 @@ public class Main extends Application {
     /** Puts a new Scene in the same Stage, resizes the window and centres it. */
     private static void show(Parent root, String title, double width, double height) {
         Scene scene = new Scene(root, width, height);
+        scene.getStylesheets().add(Main.class.getResource("/css/dashboard.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle(title);
         primaryStage.sizeToScene();

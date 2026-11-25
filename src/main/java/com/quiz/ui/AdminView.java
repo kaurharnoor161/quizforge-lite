@@ -38,6 +38,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -104,8 +105,11 @@ public class AdminView {
 
     public AdminView(User user) {
         this.user = Objects.requireNonNull(user, "user must not be null");
-        root.setTop(buildTopBar());
+        HBox topBar = buildTopBar();
+        root.setTop(topBar);
+        BorderPane.setMargin(topBar, new Insets(0, 0, 14, 0));
         root.setCenter(buildTabPane());
+        root.getStyleClass().add("dashboard-root");
     }
 
     public BorderPane getRoot() {
@@ -118,9 +122,10 @@ public class AdminView {
 
     private HBox buildTopBar() {
         Label title = new Label(user.getDashboardTitle());
-        title.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        title.getStyleClass().add("topbar-title");
 
         Label welcome = new Label("Welcome, " + user.getFullName());
+        welcome.getStyleClass().add("topbar-welcome");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -130,8 +135,8 @@ public class AdminView {
 
         HBox bar = new HBox(15, title, spacer, welcome, logoutButton);
         bar.setAlignment(Pos.CENTER_LEFT);
-        bar.setPadding(new Insets(10, 15, 10, 15));
-        bar.setStyle("-fx-background-color: #eef2f7; -fx-border-color: #c9d1dc; -fx-border-width: 0 0 1 0;");
+        bar.setPadding(new Insets(14, 18, 14, 18));
+        bar.getStyleClass().add("topbar");
         return bar;
     }
 
@@ -160,8 +165,17 @@ public class AdminView {
 
     private BorderPane buildQuestionsPane() {
         BorderPane pane = new BorderPane();
+        pane.getStyleClass().add("page-pane");
+        pane.setPadding(new Insets(16, 18, 18, 18));
         pane.setTop(buildFilterBar());
-        pane.setCenter(buildQuestionTable());
+        Label title = new Label("Question bank");
+        title.getStyleClass().add("page-title");
+        Label subtitle = new Label("Create, review, and organize quiz questions.");
+        subtitle.getStyleClass().add("page-subtitle");
+        VBox tableArea = new VBox(8, title, subtitle, buildQuestionTable());
+        VBox.setVgrow(questionTable, Priority.ALWAYS);
+        BorderPane.setMargin(tableArea, new Insets(14, 14, 0, 0));
+        pane.setCenter(tableArea);
         pane.setRight(buildForm());
 
         refreshSubjectLists();
@@ -197,7 +211,10 @@ public class AdminView {
         HBox bar = new HBox(10, new Label("Subject:"), subjectFilter,
                 new Label("Difficulty:"), difficultyFilter, clearFilters, showingLabel);
         bar.setAlignment(Pos.CENTER_LEFT);
-        bar.setPadding(new Insets(10));
+        bar.setPadding(new Insets(12));
+        bar.getStyleClass().add("toolbar");
+        clearFilters.getStyleClass().add("secondary-button");
+        showingLabel.getStyleClass().add("muted-label");
         return bar;
     }
 
@@ -245,9 +262,17 @@ public class AdminView {
 
     private ScrollPane buildForm() {
         subjectField.setEditable(true); // admin can type a brand-new subject
+        styleInput(subjectField.getEditor(), "Choose or type a subject");
+        styleInput(questionField, "Type the question here");
+        styleInput(optionAField, "Enter option A");
+        styleInput(optionBField, "Enter option B");
+        styleInput(optionCField, "Enter option C");
+        styleInput(optionDField, "Enter option D");
         questionField.setWrapText(true);
         questionField.setPrefRowCount(4);
+        correctField.setPromptText("Choose correct option");
         correctField.getItems().addAll("A", "B", "C", "D");
+        difficultyField.setPromptText("Choose difficulty");
         difficultyField.getItems().addAll(Difficulty.values());
 
         subjectField.setMaxWidth(Double.MAX_VALUE);
@@ -287,22 +312,33 @@ public class AdminView {
         statusLabel.setStyle("-fx-text-fill: #1b6e2d;");
         statusLabel.setWrapText(true);
 
-        VBox box = new VBox(10, grid, buttons, statusLabel);
-        box.setPadding(new Insets(0, 10, 10, 10));
+        Label formTitle = new Label("Question details");
+        formTitle.getStyleClass().add("section-title");
+        VBox box = new VBox(10, formTitle, grid, buttons, statusLabel);
+        box.setPadding(new Insets(14));
+        box.getStyleClass().add("panel");
 
         ScrollPane scroll = new ScrollPane(box);
         scroll.setFitToWidth(true);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setPrefWidth(350);
         scroll.setMinWidth(350);
+        scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        BorderPane.setMargin(scroll, new Insets(14, 0, 0, 0));
         return scroll;
     }
 
     private void addFormRow(GridPane grid, int row, String labelText, Node field) {
         Label label = new Label(labelText);
-        GridPane.setValignment(label, javafx.geometry.VPos.TOP);
+        label.getStyleClass().add("field-label");
+        GridPane.setValignment(label, javafx.geometry.VPos.CENTER);
         grid.add(label, 0, row);
         grid.add(field, 1, row);
+    }
+
+    private void styleInput(TextInputControl input, String prompt) {
+        input.setPromptText(prompt);
+        input.setStyle("-fx-text-fill: #17233c; -fx-prompt-text-fill: #8996ad;");
     }
 
     // ---------- Questions: data loading ----------
@@ -500,11 +536,27 @@ public class AdminView {
         HBox top = new HBox(10, refreshButton, exportButton, separator,
                 backupButton, restoreButton, spacer, attemptsLabel);
         top.setAlignment(Pos.CENTER_LEFT);
-        top.setPadding(new Insets(10));
+        top.setPadding(new Insets(12));
+        top.getStyleClass().add("toolbar");
+        refreshButton.getStyleClass().add("secondary-button");
+        exportButton.getStyleClass().add("secondary-button");
+        backupButton.getStyleClass().add("secondary-button");
+        restoreButton.getStyleClass().add("secondary-button");
+        attemptsLabel.getStyleClass().add("muted-label");
 
         BorderPane pane = new BorderPane();
-        pane.setTop(top);
-        pane.setCenter(buildResultTable());
+        pane.getStyleClass().add("page-pane");
+        pane.setPadding(new Insets(16, 18, 18, 18));
+        Label title = new Label("Student results");
+        title.getStyleClass().add("page-title");
+        Label subtitle = new Label("Review quiz performance and manage your backups.");
+        subtitle.getStyleClass().add("page-subtitle");
+        VBox heading = new VBox(5, title, subtitle);
+        VBox header = new VBox(12, heading, top);
+        pane.setTop(header);
+        TableView<Result> results = buildResultTable();
+        pane.setCenter(results);
+        BorderPane.setMargin(results, new Insets(14, 0, 0, 0));
 
         loadResults(); // load once when the tab is built
         return pane;
